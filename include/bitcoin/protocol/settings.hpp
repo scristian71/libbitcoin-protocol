@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2011-2017 libbitcoin developers (see AUTHORS)
+ * Copyright (c) 2011-2019 libbitcoin developers (see AUTHORS)
  *
  * This file is part of libbitcoin.
  *
@@ -20,8 +20,7 @@
 #define LIBBITCOIN_PROTOCOL_SETTINGS_HPP
 
 #include <cstdint>
-////#include <string>
-#include <bitcoin/bitcoin.hpp>
+#include <bitcoin/system.hpp>
 #include <bitcoin/protocol/define.hpp>
 
 namespace libbitcoin {
@@ -59,6 +58,15 @@ public:
 
     // ZMQ_SNDTIMEO (0 unlimited)
     uint32_t send_milliseconds;
+
+    /// Websocket/HTTP(s)/JSON-RPC related settings
+    bool web_priority;
+    system::config::endpoint::list web_origins;
+    boost::filesystem::path web_root;
+    boost::filesystem::path web_ca_certificate;
+    boost::filesystem::path web_server_private_key;
+    boost::filesystem::path web_server_certificate;
+    boost::filesystem::path web_client_certificates;
 };
 
 } // namespace blockchain

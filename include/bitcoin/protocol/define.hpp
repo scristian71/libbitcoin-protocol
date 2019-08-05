@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2011-2017 libbitcoin developers (see AUTHORS)
+ * Copyright (c) 2011-2019 libbitcoin developers (see AUTHORS)
  *
  * This file is part of libbitcoin.
  *
@@ -19,7 +19,7 @@
 #ifndef LIBBITCOIN_PROTOCOL_DEFINE_HPP
 #define LIBBITCOIN_PROTOCOL_DEFINE_HPP
 
-#include <bitcoin/bitcoin.hpp>
+#include <bitcoin/system.hpp>
 
 // We use the generic helper definitions in libbitcoin to define BCP_API
 // and BCP_INTERNAL. BCP_API is used for the public API symbols. It either DLL
@@ -36,6 +36,10 @@
     #define BCP_API      BC_HELPER_DLL_IMPORT
     #define BCP_INTERNAL BC_HELPER_DLL_LOCAL
 #endif
+
+// Log name.
+#define LOG_PROTOCOL "protocol"
+#define LOG_PROTOCOL_HTTP "http"
 
 #if defined _WIN32
     #include <winsock.h>

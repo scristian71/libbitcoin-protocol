@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2011-2017 libbitcoin developers (see AUTHORS)
+ * Copyright (c) 2011-2019 libbitcoin developers (see AUTHORS)
  *
  * This file is part of libbitcoin.
  *
@@ -20,12 +20,14 @@
 
 #include <string>
 #include <utility>
-#include <bitcoin/bitcoin.hpp>
+#include <bitcoin/system.hpp>
 #include <bitcoin/protocol/zmq/frame.hpp>
 
 namespace libbitcoin {
 namespace protocol {
 namespace zmq {
+
+using namespace bc::system;
 
 void message::enqueue()
 {

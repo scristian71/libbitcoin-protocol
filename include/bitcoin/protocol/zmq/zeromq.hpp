@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2011-2017 libbitcoin developers (see AUTHORS)
+ * Copyright (c) 2011-2019 libbitcoin developers (see AUTHORS)
  *
  * This file is part of libbitcoin.
  *
@@ -19,7 +19,7 @@
 #ifndef LIBBITCOIN_PROTOCOL_ZMQ_ZEROMQ_HPP
 #define LIBBITCOIN_PROTOCOL_ZMQ_ZEROMQ_HPP
 
-#include <bitcoin/bitcoin.hpp>
+#include <bitcoin/system.hpp>
 #include <bitcoin/protocol/define.hpp>
 
 namespace libbitcoin {
@@ -55,7 +55,7 @@ typedef struct zmq_pollitem
     short revents;
 } zmq_pollitem;
 
-code BCP_API get_last_error();
+system::code BCP_API get_last_error();
 
 } // namespace zmq
 } // namespace protocol

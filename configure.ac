@@ -1,5 +1,5 @@
 ###############################################################################
-#  Copyright (c) 2014-2015 libbitcoin-protocol developers (see COPYING).
+#  Copyright (c) 2014-2019 libbitcoin-protocol developers (see COPYING).
 #
 #         GENERATED SOURCE CODE, DO NOT EDIT EXCEPT EXPERIMENTALLY
 #
@@ -36,6 +36,7 @@ AC_USE_SYSTEM_EXTENSIONS
 AM_PROG_AR
 
 # Initialize libtool.
+LT_PREREQ(2.4.2)
 LT_INIT
 
 # Determine C++ compiler to use.
@@ -58,6 +59,9 @@ PKG_PROG_PKG_CONFIG
 AS_IF([test -n "$PKG_CONFIG"], [],
     [AC_MSG_ERROR([pkg-config is required but was not found.])])
 
+AS_CASE([${enable_static}],
+    [yes], [AC_SUBST([PKG_CONFIG], ["$PKG_CONFIG --static"])],
+    [])
 
 # Declare environment variables that affect the build.
 #------------------------------------------------------------------------------
@@ -93,6 +97,17 @@ AC_ARG_WITH([tests],
     [with_tests=yes])
 AC_MSG_RESULT([$with_tests])
 AM_CONDITIONAL([WITH_TESTS], [test x$with_tests != xno])
+
+# Implement --with-mbedtls and output ${mbedtls}.
+#------------------------------------------------------------------------------
+AC_MSG_CHECKING([--with-mbedtls option])
+AC_ARG_WITH([mbedtls],
+    AS_HELP_STRING([--with-mbedtls],
+        [Compile with MbedTLS. @<:@default=no@:>@]),
+    [with_mbedtls=$withval],
+    [with_mbedtls=no])
+AC_MSG_RESULT([$with_mbedtls])
+AS_CASE([${with_mbedtls}], [yes], AC_SUBST([mbedtls], [-DWITH_MBEDTLS]))
 
 # Implement --enable-ndebug and define NDEBUG.
 #------------------------------------------------------------------------------
@@ -170,29 +185,45 @@ AS_CASE([${enable_isystem}],[yes],
 
 AC_MSG_NOTICE([zmq_BUILD_CPPFLAGS : ${zmq_BUILD_CPPFLAGS}])
 
-# Require bitcoin of at least version 4.0.0 and output ${bitcoin_CPPFLAGS/LIBS/PKG}.
+# Require mbedtls of at least version 2.12.0 and output ${mbedtls_CPPFLAGS/LIBS/PKG}.
 #------------------------------------------------------------------------------
-PKG_CHECK_MODULES([bitcoin], [libbitcoin >= 4.0.0],
-    [bitcoin_INCLUDEDIR="`$PKG_CONFIG --variable=includedir "libbitcoin >= 4.0.0" 2>/dev/null`"
-     bitcoin_OTHER_CFLAGS="`$PKG_CONFIG --cflags-only-other "libbitcoin >= 4.0.0" 2>/dev/null`"],
-    [bitcoin_INCLUDEDIR=""
-     bitcoin_OTHER_CFLAGS=""])
-AC_SUBST([bitcoin_PKG], ['libbitcoin >= 4.0.0'])
-AC_SUBST([bitcoin_CPPFLAGS], [${bitcoin_CFLAGS}])
-AS_IF([test x${bitcoin_INCLUDEDIR} != "x"],
-    [AC_SUBST([bitcoin_ISYS_CPPFLAGS], ["-isystem${bitcoin_INCLUDEDIR} ${bitcoin_OTHER_CFLAGS}"])],
-    [AC_SUBST([bitcoin_ISYS_CPPFLAGS], [${bitcoin_OTHER_CFLAGS}])])
-AC_MSG_NOTICE([bitcoin_CPPFLAGS : ${bitcoin_CPPFLAGS}])
-AC_MSG_NOTICE([bitcoin_ISYS_CPPFLAGS : ${bitcoin_ISYS_CPPFLAGS}])
-AC_MSG_NOTICE([bitcoin_OTHER_CFLAGS : ${bitcoin_OTHER_CFLAGS}])
-AC_MSG_NOTICE([bitcoin_INCLUDEDIR : ${bitcoin_INCLUDEDIR}])
-AC_MSG_NOTICE([bitcoin_LIBS : ${bitcoin_LIBS}])
+AS_CASE([${with_mbedtls}], [yes],
+    [AC_SUBST([mbedtls_INCLUDEDIR], [])
+     AC_SUBST([mbedtls_OTHER_CPPFLAGS], [])
+     AC_SUBST([mbedtls_CPPFLAGS], [])
+     AC_SUBST([mbedtls_ISYS_CPPFLAGS], [])
+     AC_SUBST([mbedtls_LIBS], ["-lmbedtls -lmbedcrypto -lmbedx509"])
+     AC_MSG_NOTICE([mbedtls presumed, not detected - absence of -lmbedtls -lmbedcrypto -lmbedx509 may result in link error.])], [])
 
 AS_CASE([${enable_isystem}],[yes],
-    [AC_SUBST([bitcoin_BUILD_CPPFLAGS], [${bitcoin_ISYS_CPPFLAGS}])],
-    [AC_SUBST([bitcoin_BUILD_CPPFLAGS], [${bitcoin_CPPFLAGS}])])
+    [AC_SUBST([mbedtls_BUILD_CPPFLAGS], [${mbedtls_ISYS_CPPFLAGS}])],
+    [AC_SUBST([mbedtls_BUILD_CPPFLAGS], [${mbedtls_CPPFLAGS}])])
 
-AC_MSG_NOTICE([bitcoin_BUILD_CPPFLAGS : ${bitcoin_BUILD_CPPFLAGS}])
+AC_MSG_NOTICE([mbedtls_BUILD_CPPFLAGS : ${mbedtls_BUILD_CPPFLAGS}])
+
+# Require bitcoin-system of at least version 4.0.0 and output ${bitcoin_system_CPPFLAGS/LIBS/PKG}.
+#------------------------------------------------------------------------------
+PKG_CHECK_MODULES([bitcoin_system], [libbitcoin-system >= 4.0.0],
+    [bitcoin_system_INCLUDEDIR="`$PKG_CONFIG --variable=includedir "libbitcoin-system >= 4.0.0" 2>/dev/null`"
+     bitcoin_system_OTHER_CFLAGS="`$PKG_CONFIG --cflags-only-other "libbitcoin-system >= 4.0.0" 2>/dev/null`"],
+    [bitcoin_system_INCLUDEDIR=""
+     bitcoin_system_OTHER_CFLAGS=""])
+AC_SUBST([bitcoin_system_PKG], ['libbitcoin-system >= 4.0.0'])
+AC_SUBST([bitcoin_system_CPPFLAGS], [${bitcoin_system_CFLAGS}])
+AS_IF([test x${bitcoin_system_INCLUDEDIR} != "x"],
+    [AC_SUBST([bitcoin_system_ISYS_CPPFLAGS], ["-isystem${bitcoin_system_INCLUDEDIR} ${bitcoin_system_OTHER_CFLAGS}"])],
+    [AC_SUBST([bitcoin_system_ISYS_CPPFLAGS], [${bitcoin_system_OTHER_CFLAGS}])])
+AC_MSG_NOTICE([bitcoin_system_CPPFLAGS : ${bitcoin_system_CPPFLAGS}])
+AC_MSG_NOTICE([bitcoin_system_ISYS_CPPFLAGS : ${bitcoin_system_ISYS_CPPFLAGS}])
+AC_MSG_NOTICE([bitcoin_system_OTHER_CFLAGS : ${bitcoin_system_OTHER_CFLAGS}])
+AC_MSG_NOTICE([bitcoin_system_INCLUDEDIR : ${bitcoin_system_INCLUDEDIR}])
+AC_MSG_NOTICE([bitcoin_system_LIBS : ${bitcoin_system_LIBS}])
+
+AS_CASE([${enable_isystem}],[yes],
+    [AC_SUBST([bitcoin_system_BUILD_CPPFLAGS], [${bitcoin_system_ISYS_CPPFLAGS}])],
+    [AC_SUBST([bitcoin_system_BUILD_CPPFLAGS], [${bitcoin_system_CPPFLAGS}])])
+
+AC_MSG_NOTICE([bitcoin_system_BUILD_CPPFLAGS : ${bitcoin_system_BUILD_CPPFLAGS}])
 
 
 # Set flags.

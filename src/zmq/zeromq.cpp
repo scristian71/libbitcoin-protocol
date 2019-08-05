@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2011-2017 libbitcoin developers (see AUTHORS)
+ * Copyright (c) 2011-2019 libbitcoin developers (see AUTHORS)
  *
  * This file is part of libbitcoin.
  *
@@ -19,11 +19,13 @@
 #include <bitcoin/protocol/zmq/zeromq.hpp>
 
 #include <zmq.h>
-#include <bitcoin/bitcoin.hpp>
+#include <bitcoin/system.hpp>
 
 namespace libbitcoin {
 namespace protocol {
 namespace zmq {
+
+using namespace bc::system;
 
 // See zmq::errno_to_string
 code get_last_error()

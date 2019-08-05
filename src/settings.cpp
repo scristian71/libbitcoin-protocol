@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2011-2017 libbitcoin developers (see AUTHORS)
+ * Copyright (c) 2011-2019 libbitcoin developers (see AUTHORS)
  *
  * This file is part of libbitcoin.
  *
@@ -19,10 +19,12 @@
 #include <bitcoin/protocol/settings.hpp>
 
 #include <cstdint>
-#include <bitcoin/bitcoin.hpp>
+#include <bitcoin/system.hpp>
 
 namespace libbitcoin {
 namespace protocol {
+
+using namespace bc::system;
 
 settings::settings()
   : send_high_water(100),
@@ -32,7 +34,13 @@ settings::settings()
     ping_seconds(0),
     inactivity_seconds(0),
     reconnect_seconds(1),
-    send_milliseconds(0)
+    send_milliseconds(0),
+    web_priority(false),
+    web_origins({}),
+    web_root(""),
+    web_ca_certificate(""),
+    web_server_private_key(""),
+    web_server_certificate("")
 {
 }
 
@@ -44,7 +52,13 @@ settings::settings(uint32_t send_high_water, uint32_t receive_high_water)
     ping_seconds(0),
     inactivity_seconds(0),
     reconnect_seconds(1),
-    send_milliseconds(0)
+    send_milliseconds(0),
+    web_priority(false),
+    web_origins({}),
+    web_root(""),
+    web_ca_certificate(""),
+    web_server_private_key(""),
+    web_server_certificate("")
 {
 }
 

@@ -1,5 +1,5 @@
 ###############################################################################
-#  Copyright (c) 2014-2015 libbitcoin-protocol developers (see COPYING).
+#  Copyright (c) 2014-2019 libbitcoin-protocol developers (see COPYING).
 #
 #         GENERATED SOURCE CODE, DO NOT EDIT EXCEPT EXPERIMENTALLY
 #
@@ -35,7 +35,7 @@ matrix:
               sources:
                 - sourceline: 'ppa:h-rayflood/llvm'
               packages:
-                - clang-3.4
+                - clang-3.8
         - os: linux
           compiler: gcc
           env: LINK=dynamic
@@ -66,7 +66,7 @@ install:
 
     # Export CC/CXX to control compiler/version.
     - if [[ $OSX   && $CLANG && $STATIC  ]]; then export CC=clang; export CXX=clang++; fi
-    - if [[ $LINUX && $CLANG && $STATIC  ]]; then export CC=clang-3.4; export CXX=clang++-3.4; fi
+    - if [[ $LINUX && $CLANG && $STATIC  ]]; then export CC=clang-3.8; export CXX=clang++-3.8; fi
     - if [[ $LINUX && $GCC   && $STATIC  ]]; then export CC=gcc; export CXX=g++; fi
     - if [[ $OSX   && $CLANG && $DYNAMIC ]]; then export CC=clang; export CXX=clang++; fi
     - if [[ $LINUX && $CLANG && $DYNAMIC ]]; then export CC=clang; export CXX=clang++; fi
@@ -79,9 +79,9 @@ script:
     # Download and build libbitcoin-protocol and all dependencies.
     - if [[ $OSX   && $CLANG && $STATIC  ]]; then CC=$CC CXX=$CXX ./install.sh --enable-isystem --disable-shared --build-boost --build-zmq --prefix=$TRAVIS_BUILD_DIR/my-prefix; fi
     - if [[ $LINUX && $CLANG && $STATIC  ]]; then CC=$CC CXX=$CXX ./install.sh --enable-isystem --disable-shared --build-boost --build-zmq --prefix=$TRAVIS_BUILD_DIR/my-prefix CFLAGS='-Os' CXXFLAGS='-Os'; fi
-    - if [[ $LINUX && $GCC   && $STATIC  ]]; then CC=$CC CXX=$CXX ./install.sh --enable-isystem --build-boost --build-zmq --disable-shared --build-dir=my-build --prefix=$TRAVIS_BUILD_DIR/my-prefix CFLAGS='-Og -g --coverage' CXXFLAGS='-Og -g --coverage'; fi
-    - if [[ $OSX   && $CLANG && $DYNAMIC ]]; then CC=$CC CXX=$CXX ./install.sh --enable-isystem --build-zmq --disable-static; fi
-    - if [[ $LINUX && $CLANG && $DYNAMIC ]]; then CC=$CC CXX=$CXX ./install.sh --enable-isystem --build-boost --build-zmq --disable-ndebug --disable-static --prefix=$TRAVIS_BUILD_DIR/my-prefix CFLAGS='-Os' CXXFLAGS='-Os'; fi
+    - if [[ $LINUX && $GCC   && $STATIC  ]]; then CC=$CC CXX=$CXX ./install.sh --enable-isystem --build-boost --build-zmq --build-mbedtls --disable-shared --build-dir=my-build --prefix=$TRAVIS_BUILD_DIR/my-prefix CFLAGS='-Og -g --coverage' CXXFLAGS='-Og -g --coverage'; fi
+    - if [[ $OSX   && $CLANG && $DYNAMIC ]]; then CC=$CC CXX=$CXX ./install.sh --enable-isystem --build-zmq --build-mbedtls --disable-static; fi
+    - if [[ $LINUX && $CLANG && $DYNAMIC ]]; then CC=$CC CXX=$CXX ./install.sh --enable-isystem --build-boost --build-zmq --build-mbedtls --disable-ndebug --disable-static --prefix=$TRAVIS_BUILD_DIR/my-prefix CFLAGS='-Os' CXXFLAGS='-Os'; fi
     - if [[ $LINUX && $GCC   && $DYNAMIC ]]; then CC=$CC CXX=$CXX ./install.sh --enable-isystem --disable-static --build-boost --build-zmq --prefix=$TRAVIS_BUILD_DIR/my-prefix CFLAGS='-Os -s' CXXFLAGS='-Os -s'; fi
 
 after_success:

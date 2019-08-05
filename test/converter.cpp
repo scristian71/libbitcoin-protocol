@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2011-2017 libbitcoin developers (see AUTHORS)
+ * Copyright (c) 2011-2019 libbitcoin developers (see AUTHORS)
  *
  * This file is part of libbitcoin.
  *
@@ -24,8 +24,8 @@
 #include <boost/test/unit_test_suite.hpp>
 #include <bitcoin/protocol.hpp>
 
-using namespace bc;
-using namespace bc::chain;
+using namespace bc::system;
+using namespace bc::system::chain;
 using namespace bc::protocol;
 
 #define BCP_GENESIS_BLOCK_HASH \
@@ -36,7 +36,7 @@ using namespace bc::protocol;
 
 std::string encoded_script = "76a91418c0bd8d1818f1bf99cb1df2269c645318ef7b7388ac\n";
 
-// TODO: move these comparison operators to the bc::chain classes.
+// TODO: move these comparison operators to the bc::system::chain classes.
 bool operator==(const chain::script& a, const chain::script& b)
 {
     const auto encoded_a = a.to_data(false);

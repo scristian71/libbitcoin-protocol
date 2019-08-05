@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2011-2017 libbitcoin developers (see AUTHORS)
+ * Copyright (c) 2011-2019 libbitcoin developers (see AUTHORS)
  *
  * This file is part of libbitcoin.
  *
@@ -22,8 +22,8 @@
 #include <bitcoin/protocol.hpp>
 #include "../utility.hpp"
 
-using namespace bc;
-using namespace bc::config;
+using namespace bc::system;
+using namespace bc::system::config;
 using namespace bc::protocol;
 using role = zmq::socket::role;
 

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2011-2017 libbitcoin developers (see AUTHORS)
+ * Copyright (c) 2011-2019 libbitcoin developers (see AUTHORS)
  *
  * This file is part of libbitcoin.
  *
@@ -35,7 +35,7 @@ namespace zmq {
 /// This class is not thread safe.
 /// All calls must be made on the socket(s) thread.
 class BCP_API poller
-  : public enable_shared_from_base<poller>, noncopyable
+  : public system::enable_shared_from_base<poller>, system::noncopyable
 {
 public:
     /// A shared poller pointer.
