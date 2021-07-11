@@ -19,11 +19,7 @@
 #ifndef LIBBITCOIN_PROTOCOL_WEB_REPLY_HPP
 #define LIBBITCOIN_PROTOCOL_WEB_REPLY_HPP
 
-#include <array>
-#include <cstddef>
-#include <ctime>
 #include <string>
-#include <sstream>
 #include <unordered_map>
 #include <bitcoin/protocol/define.hpp>
 #include <bitcoin/protocol/web/http.hpp>
@@ -33,91 +29,16 @@ namespace libbitcoin {
 namespace protocol {
 namespace http {
 
-// TODO: move implementation to cpp.
 class BCP_API http_reply
 {
 public:
-    static std::string to_string(protocol_status status)
-    {
-        struct protocol_status_hasher
-        {
-            size_t operator()(const protocol_status& status) const
-            {
-                return std::hash<uint16_t>{}(static_cast<uint16_t>(status));
-            }
-        };
+    static std::string to_string(protocol_status status);
 
-        typedef std::unordered_map<protocol_status, std::string,
-            protocol_status_hasher> status_map;
-        static const status_map status_strings
-        {
-            { protocol_status::switching, "HTTP/1.1 101 Switching Protocols\r\n" },
-            { protocol_status::ok, "HTTP/1.0 200 OK\r\n" },
-            { protocol_status::created, "HTTP/1.0 201 Created\r\n" },
-            { protocol_status::accepted, "HTTP/1.0 202 Accepted\r\n" },
-            { protocol_status::no_content, "HTTP/1.0 204 No Content\r\n" },
-            { protocol_status::multiple_choices, "HTTP/1.0 300 Multiple Choices\r\n" },
-            { protocol_status::moved_permanently, "HTTP/1.0 301 Moved Permanently\r\n" },
-            { protocol_status::moved_temporarily, "HTTP/1.0 302 Moved Temporarily\r\n" },
-            { protocol_status::not_modified, "HTTP/1.0 304 Not Modified\r\n" },
-            { protocol_status::bad_request, "HTTP/1.0 400 Bad Request\r\n" },
-            { protocol_status::unauthorized, "HTTP/1.0 401 Unauthorized\r\n" },
-            { protocol_status::forbidden, "HTTP/1.0 403 Forbidden\r\n" },
-            { protocol_status::not_found, "HTTP/1.0 404 Not Found\r\n" },
-            { protocol_status::internal_server_error, "HTTP/1.0 500 Internal Server Error\r\n" },
-            { protocol_status::not_implemented, "HTTP/1.0 501 Not Implemented\r\n" },
-            { protocol_status::bad_gateway, "HTTP/1.0 502 Bad Gateway\r\n" },
-            { protocol_status::service_unavailable, "HTTP/1.0 503 Service Unavailable\r\n" }
-        };
-
-        const auto it = status_strings.find(status);
-        return it == status_strings.end() ? std::string{} : it->second;
-    }
-
-    static std::string generate(protocol_status status, std::string mime_type,
-        size_t content_length, bool keep_alive)
-    {
-        static const size_t max_date_time_length = 32;
-        std::array<char, max_date_time_length> time_buffer;
-        const auto current_time = std::time(nullptr);
-
-        // BUGBUG: std::gmtime may not be thread safe.
-        std::strftime(time_buffer.data(), time_buffer.size(),
-            "%a, %d %b %Y %H:%M:%S GMT", std::gmtime(&current_time));
-
-        std::stringstream response;
-        response
-            << to_string(status)
-            << "Date: " << time_buffer.data() << "\r\n"
-            << "Accept-Ranges: none\r\n"
-            << "Connection: " << (keep_alive ? "keep-alive" : "close")
-            << "\r\n";
-
-        if (!mime_type.empty())
-            response << "Content-Type: " << mime_type << "\r\n";
-
-        if (content_length > 0)
-            response << "Content-Length: " << content_length << "\r\n";
-
-        response << "\r\n";
-        return response.str();
-    }
+    static std::string generate(protocol_status status,
+        const std::string& mime_type, size_t content_length, bool keep_alive);
 
     static std::string generate_upgrade(const std::string& key_response,
-        const std::string& protocol)
-    {
-        std::stringstream response;
-        response
-            << to_string(protocol_status::switching)
-            << "Upgrade: websocket\r\n"
-            << "Connection: Upgrade" << "\r\n";
-
-        if (!protocol.empty())
-            response << protocol << "\r\n";
-
-        response << "Sec-WebSocket-Accept: " << key_response << "\r\n\r\n";
-        return response.str();
-    }
+        const std::string& protocol);
 
     protocol_status status;
     string_map headers;

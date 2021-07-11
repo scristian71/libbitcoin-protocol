@@ -18,7 +18,10 @@
  */
 #include <bitcoin/protocol/web/manager.hpp>
 
- // TODO: include other headers.
+#include <cstddef>
+#include <bitcoin/system.hpp>
+
+ // TODO: missing includes.
 
 #ifdef WITH_MBEDTLS
 extern "C"
@@ -50,18 +53,9 @@ static constexpr size_t maximum_connections = FD_SETSIZE;
 
 manager::manager(bool ssl, event_handler handler, path document_root,
     const origin_list origins)
-  : ssl_(ssl),
-    running_(false),
-    listening_(false),
-    initialized_(false),
-    port_(0),
-    user_data_(nullptr),
-    key_{},
-    certificate_{},
-    ca_certificate_{},
-    handler_(handler),
-    document_root_(document_root),
-    origins_(origins),
+  : ssl_(ssl), running_(false), listening_(false), initialized_(false),
+    port_(0), user_data_(nullptr), key_{}, certificate_{}, ca_certificate_{},
+    handler_(handler), document_root_(document_root), origins_(origins),
     page_data_{}
 {
 #ifndef WITH_MBEDTLS
@@ -104,9 +98,8 @@ bool manager::bind(const config::endpoint& address, const bind_options& options)
 {
     if (address.host() != "*")
     {
-        LOG_INFO(LOG_PROTOCOL_HTTP)
-            << "Failed to bind to named host (unsupported): " << address;
-        return false;
+        LOG_WARNING(LOG_PROTOCOL_HTTP)
+            << "Detected named host, but binding to '*': " << address;
     }
 
     port_ = address.port();
@@ -836,8 +829,11 @@ bool manager::send_http_file(connection_ptr connection, const path& path,
     if (!file_transfer.in_progress)
     {
         // BUGBUG: UTF8 string passed to Windows ANSI parameter.
+        // TODO: use wide character API and Unicode conversion.
         const auto file = path.generic_string().c_str();
 
+        // TODO: C4996: 'fopen': This function or variable may be unsafe.
+        // Consider using fopen_s instead.
         file_transfer.descriptor = fopen(file, "r");
         if (file_transfer.descriptor == nullptr)
             return false;
@@ -1070,22 +1066,14 @@ bool manager::send_response(connection_ptr connection,
         LOG_VERBOSE(LOG_PROTOCOL_HTTP)
             << "Requested Path: " << path << " does not exist";
 
-        // TODO: move time formatter to independent utility.
-        static const size_t max_date_time_length = 32;
-        std::array<char, max_date_time_length> time_buffer;
-        const auto current_time = std::time(nullptr);
-
-        // BUGBUG: std::gmtime may not be thread safe.
-        std::strftime(time_buffer.data(), time_buffer.size(),
-            "%a, %d %b %Y %H:%M:%S GMT", std::gmtime(&current_time));
-
         std::stringstream response;
+        const auto time = time_string();
 
         if (page_data_.empty())
         {
             response
                 << "HTTP/1.1 404 Not Found\r\n"
-                << "Date: " << time_buffer.data() << "\r\n"
+                << "Date: " << time << "\r\n"
                 << "Content-Type: text/html\r\n"
                 << "Content-Length: 90\r\n\r\n"
                 << "<html><head><title>Page not found</title></head>"
@@ -1095,7 +1083,7 @@ bool manager::send_response(connection_ptr connection,
         {
             response
                 << "HTTP/1.0 200 OK\r\n"
-                << "Date: " << time_buffer.data() << "\r\n"
+                << "Date: " << time << "\r\n"
                 << "Content-Type: text/html\r\n"
                 << "Content-Length: " << page_data_.size() << "\r\n\r\n"
                 << page_data_ << "\r\n\r\n";
@@ -1116,7 +1104,8 @@ bool manager::send_generated_reply(connection_ptr connection,
     protocol_status status)
 {
     http_reply reply;
-    return connection->write(reply.generate(status, {}, 0, false));
+    return connection->write(reply.generate(status, {}, size_t{ 0 }, false))
+        != 0;
 }
 
 bool manager::upgrade_connection(connection_ptr connection,
@@ -1195,9 +1184,9 @@ bool manager::validate_origin(const std::string& origin)
         origins_.end();
 }
 
+#ifdef WITH_MBEDTLS
 bool manager::initialize_ssl(connection_ptr connection, bool listener)
 {
-#ifdef WITH_MBEDTLS
     auto& context = connection->ssl_context();
     auto& configuration = context.configuration;
 
@@ -1295,10 +1284,13 @@ bool manager::initialize_ssl(connection_ptr connection, bool listener)
 
     context.enabled = true;
     return context.enabled;
-#else
-    return false;
-#endif
 }
+#else
+bool manager::initialize_ssl(connection_ptr, bool)
+{
+    return false;
+}
+#endif
 
 } // namespace http
 } // namespace protocol

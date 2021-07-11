@@ -16,25 +16,40 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef LIBBITCOIN_PROTOCOL_WEB_DEFAULT_PAGE_DATA_HPP
-#define LIBBITCOIN_PROTOCOL_WEB_DEFAULT_PAGE_DATA_HPP
+#include <bitcoin/protocol/web/http_request.hpp>
 
-#include <bitcoin/protocol/define.hpp>
-#include <bitcoin/protocol/settings.hpp>
+#include <string>
+#include <boost/algorithm/string.hpp>
+#include <bitcoin/protocol/web/http.hpp>
 
 namespace libbitcoin {
 namespace protocol {
 namespace http {
 
-/// Given endpoints for each web service based on user configuration,
-/// we can generate default page data.
-std::string get_default_page_data(const bc::system::config::endpoint& query,
-    const bc::system::config::endpoint& heartbeat,
-    const bc::system::config::endpoint& block,
-    const bc::system::config::endpoint& transaction);
+http_request::http_request()
+  : method({}), uri({}), protocol({}), protocol_version(0.0f),
+    message_length(0), content_length(0), headers({}), parameters({}),
+    upgrade_request(false), json_rpc(false)
+{
+}
+
+std::string http_request::find(const string_map& haystack,
+    const std::string& needle) const
+{
+    const auto it = haystack.find(needle);
+    return it == haystack.end() ? std::string{} : it->second;
+}
+
+std::string http_request::header(const std::string& header) const
+{
+    return find(headers, boost::algorithm::to_lower_copy(header));
+}
+
+std::string http_request::parameter(const std::string& parameter) const
+{
+    return find(parameters, boost::algorithm::to_lower_copy(parameter));
+}
 
 } // namespace http
 } // namespace protocol
 } // namespace libbitcoin
-
-#endif

@@ -1,5 +1,5 @@
 ###############################################################################
-#  Copyright (c) 2014-2019 libbitcoin-protocol developers (see COPYING).
+#  Copyright (c) 2014-2020 libbitcoin-protocol developers (see COPYING).
 #
 #         GENERATED SOURCE CODE, DO NOT EDIT EXCEPT EXPERIMENTALLY
 #
@@ -97,7 +97,7 @@ endif()
 
 # Find boost
 #------------------------------------------------------------------------------
-find_package( Boost 1.62.0 REQUIRED COMPONENTS
+find_package( Boost 1.72.0 REQUIRED COMPONENTS
     unit_test_framework )
 
 set( boost_unit_test_framework_LIBS "-lboost_unit_test_framework" )
@@ -113,7 +113,7 @@ set( boost_LDFLAGS "-L${Boost_LIBRARY_DIR}" )
 
 # Find zmq
 #------------------------------------------------------------------------------
-find_package( Zmq 4.2.5 REQUIRED )
+find_package( Zmq 4.3.4 REQUIRED )
 
 # Find mbedtls
 #------------------------------------------------------------------------------
@@ -142,12 +142,12 @@ endif()
 # Define project common library directories
 #------------------------------------------------------------------------------
 if (BUILD_SHARED_LIBS)
-    link_directories( 
+    link_directories(
         ${zmq_LIBRARY_DIRS}
         ${mbedtls_LIBRARY_DIRS}
         ${bitcoin_system_LIBRARY_DIRS} )
 else()
-    link_directories( 
+    link_directories(
         ${zmq_STATIC_LIBRARY_DIRS}
         ${mbedtls_STATIC_LIBRARY_DIRS}
         ${bitcoin_system_STATIC_LIBRARY_DIRS} )
@@ -156,14 +156,14 @@ endif()
 # Define project common libraries/linker flags.
 #------------------------------------------------------------------------------
 if (BUILD_SHARED_LIBS)
-    link_libraries( 
+    link_libraries(
         "-fstack-protector"
         "-fstack-protector-all"
         ${zmq_LIBRARIES}
         ${mbedtls_LIBRARIES}
         ${bitcoin_system_LIBRARIES} )
 else()
-    link_libraries( 
+    link_libraries(
         "-fstack-protector"
         "-fstack-protector-all"
         ${zmq_STATIC_LIBRARIES}
@@ -171,7 +171,7 @@ else()
         ${bitcoin_system_STATIC_LIBRARIES} )
 endif()
 
-add_definitions( 
+add_definitions(
     ${mbedtls} )
 
 # Define ${CANONICAL_LIB_NAME} project.
@@ -179,7 +179,8 @@ add_definitions(
 add_library( ${CANONICAL_LIB_NAME}
     "../../src/settings.cpp"
     "../../src/web/connection.cpp"
-    "../../src/web/default_page_data.cpp"
+    "../../src/web/http_reply.cpp"
+    "../../src/web/http_request.cpp"
     "../../src/web/json_string.cpp"
     "../../src/web/manager.cpp"
     "../../src/web/socket.cpp"

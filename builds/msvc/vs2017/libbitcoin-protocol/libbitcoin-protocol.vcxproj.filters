@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
- |  Copyright (c) 2014-2019 libbitcoin-protocol developers (see COPYING).
+ |  Copyright (c) 2014-2020 libbitcoin-protocol developers (see COPYING).
  |
  |         GENERATED SOURCE CODE, DO NOT EDIT EXCEPT EXPERIMENTALLY
  |
@@ -42,7 +42,10 @@
     <ClCompile Include="..\..\..\..\src\web\connection.cpp">
       <Filter>src\web</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\..\src\web\default_page_data.cpp">
+    <ClCompile Include="..\..\..\..\src\web\http_reply.cpp">
+      <Filter>src\web</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\src\web\http_request.cpp">
       <Filter>src\web</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\..\src\web\json_string.cpp">
@@ -111,9 +114,6 @@
       <Filter>include\bitcoin\protocol\web</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\..\include\bitcoin\protocol\web\connection_state.hpp">
-      <Filter>include\bitcoin\protocol\web</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\include\bitcoin\protocol\web\default_page_data.hpp">
       <Filter>include\bitcoin\protocol\web</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\..\include\bitcoin\protocol\web\event.hpp">
